@@ -18,6 +18,10 @@ var utils = {
       array[i] = array[n];
       array[n] = t;
     }
+  },
+  getMousePosition: function(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {x: evt.clientX - rect.left, y: evt.clientY - rect.top}
   }
 }
 

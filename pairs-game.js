@@ -162,9 +162,19 @@ var pairsGame = {
       // game logic lives here
       console.log("click");
 
+      var rect = canvas.getBoundingClientRect();
+
+      // don't trigger click event if mouse is outside cards
+      if (evt.clientX - rect.left < xoff * iconScale
+          || evt.clientX - rect.left > xoff * iconScale + 26 * cols * iconScale
+          || evt.clientY - rect.top < yoff * iconScale
+          || evt.clientY - rect.top > yoff * iconScale + 26 * rows * iconScale) {
+        return;
+      }
+
       // target the clicked card
-      var i = ((evt.layerX - xoff * iconScale) / (26 * iconScale)) | 0;
-      var j = ((evt.layerY - yoff * iconScale) / (26 * iconScale)) | 0;
+      var i = ((evt.clientX - rect.left - xoff * iconScale) / (26 * iconScale)) | 0;
+      var j = ((evt.clientY - rect.top - yoff * iconScale) / (26 * iconScale)) | 0;
 
       console.log( i + ", " + j );
 

@@ -6,10 +6,13 @@
     body {
       background-color: #222;
     }
+    #volumeDiv {
+      position: absolute;
+    }
   </style>
 
   <script type="text/javascript" src='./pairs-game.js'></script>
-  
+
   <!--
   <script type="text/javascript" src="resampler.js"> </script>
   <script type="text/javascript" src="swfobject.js"> </script>
@@ -24,14 +27,36 @@
 </head>
 <body>
 
-  <canvas id='game-canvas'></canvas>
+  <div id='volumeDiv'>
+    <input id='myVolSlider' type="range" min='0' max='100' value='20' step='10' onchange='changeVolume(this.value)'>
+  </div>
+
+  <canvas id='game-canvas'>
+  </canvas>
 
   <script type="text/javascript">
     // init the game
+    XAudioJSVolume = .1;
+
+    var music = 'Plastic_Pop.sap';
     pairsGame.init('game-canvas');
     setTimeout(function() {
+      XAudioJSVolume = .1;
       binaryHttpRequest('Plastic_Pop.sap', asap.play);
+      setTimeout(function() {
+        changeVolume(20);
+      }, 200);
     }, 1000);
+
+    asap.onPlaybackEnd = function() {
+      binaryHttpRequest(music, asap.play);
+    };
+
+    function changeVolume(value) {
+      document.getElementById('myVolSlider').innerHTML = value;
+      XAudioJSVolume = (value / 100);
+      console.log("volume changed to: " + (XAudioJSVolume * 100) | 0 + "%");
+    }
   </script>
 
 </body>

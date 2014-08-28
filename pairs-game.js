@@ -90,40 +90,8 @@ var pairsGame = {
         //drawIcon(icons[loadingCounter++ % icons.length], 40, 80+2+2+24*2);
         //setTimeout(animateLoadingScreen, 300);
 
-        // load the icons we want to use
-        while (map.length  < 10) {
-          var n = Math.random() * icons.length | 0;
-
-          if (n == 49) continue;
-          var skip = false;
-          for (var i = 0; i < map.length; i++) {
-            if (map[i] == n)
-              skip = true;
-          }
-
-          if (!skip)
-            map.push(n);
-        }
-
-        // double the array and shuffle it
-        map = map.concat(map);
-        utils.shuffle(map);
-        console.log(map);
-
-        // initialize board
-        rows = Math.sqrt(map.length) | 0;
-        cols = (map.length / rows) | 0;
-        for (var i = 0; i < map.length; i++) {
-          board[i] = {
-            icon: map[i],
-            faceup: false,
-            x: (i % cols) * 26,
-            y: ((i / cols) | 0) * 26
-          }
-        }
-        
-        // draw board
-        drawBoard();
+        // reset the game
+        resetGame();
       }
     })();
 
@@ -211,7 +179,7 @@ var pairsGame = {
           second = b;
           b.faceup = !b.faceup;
           drawBoard();
-          // time to show and calculate if twin cards were chosen.
+          // time to show and calculate if pair cards were chosen.
           canClick = false;
           var sleep = 1500;
           if (first.icon === second.icon) {
@@ -247,10 +215,17 @@ var pairsGame = {
         }
       }
 
-      if (finished) {
+      if (finished && !resettingGame) {
         console.log("Game Finsihed - you won!");
+        resettingGame = true;
+
+        setTimeout(function() {
+          resetGame();
+        }, 3000);
       }
     }
+
+    var resettingGame = false;
 
     function drawBoard() {
       drawImage(assets['bg'], 0, 0);
@@ -264,5 +239,46 @@ var pairsGame = {
       }
     }
 
+    function resetGame() {
+      resettingGame = false;
+
+      map = [];
+      board = [];
+
+      // load the icons we want to use
+      while (map.length < 10) {
+        var n = Math.random() * icons.length | 0;
+
+        if (n == 49) continue;
+        var skip = false;
+        for (var i = 0; i < map.length; i++) {
+          if (map[i] == n)
+            skip = true;
+        }
+
+        if (!skip)
+          map.push(n);
+      }
+
+      // double the array and shuffle it
+      map = map.concat(map);
+      utils.shuffle(map);
+      console.log(map);
+
+      // initialize board
+      rows = Math.sqrt(map.length) | 0;
+      cols = (map.length / rows) | 0;
+      for (var i = 0; i < map.length; i++) {
+        board[i] = {
+          icon: map[i],
+          faceup: false,
+          x: (i % cols) * 26,
+          y: ((i / cols) | 0) * 26
+        }
+      }
+      
+      // draw board
+      drawBoard();
+    }
   }
 };

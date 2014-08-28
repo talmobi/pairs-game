@@ -28,7 +28,7 @@
 <body>
 
   <div id='volumeDiv'>
-    <input id='myVolSlider' type="range" min='0' max='100' value='20' step='10' onchange='changeVolume(this.value)'>
+    <input id='myVolSlider' type="range" min='0' max='100' value='10' step='10' onchange='changeVolume(this.value)'>
   </div>
 
   <canvas id='game-canvas'>
@@ -38,13 +38,13 @@
     // init the game
     XAudioJSVolume = .1;
 
-    var music = 'Plastic_Pop.sap';
+    var music = 'ABBUC_25.sap';
     pairsGame.init('game-canvas');
     setTimeout(function() {
       XAudioJSVolume = .1;
-      binaryHttpRequest('Plastic_Pop.sap', asap.play);
+      binaryHttpRequest('ABBUC_25.sap', asap.play);
       setTimeout(function() {
-        changeVolume(20);
+        changeVolume(10);
       }, 200);
     }, 1000);
 

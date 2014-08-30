@@ -27,6 +27,11 @@ var utils = {
 
 var pairsGame = {
   init: function(canvasId) {
+    if (!canvasId) {
+      console.log("No Canvas specified for init() function.");
+      return;
+    }
+
     console.log("initializing game.");
 
     var scale = 1;
@@ -72,6 +77,59 @@ var pairsGame = {
 
     var loadingCounter = 0;
     var loadingStrings = ['Loading', 'Loading.', 'Loading..', 'Loading...'];
+
+
+    window.audioSystem = {};
+
+    // bg music
+    var audio = document.createElement('audio');
+    audio.loop = true;
+    /*audio.oncanplaythrough = function() {
+      audio.play();
+    };*/
+    audio.addEventListener('canplaythrough', function() {
+      audio.play();
+    }, false);
+    audio.src = 'Smoovy.mp3';
+    audio.volume = .02;
+
+    // card flip sfx
+    var sfx_cardFlip = createSFX('cardFlip', 'flip.mp3', false);
+    sfx_cardFlip.volume = .02;
+
+    var sfx_win = createSFX('win', 'win.mp3', false);
+    sfx_win.volume = 1;
+
+    function createSFX(name, src, loop, callback) {
+      var audio = document.createElement('audio');
+
+      audio.loop = loop;
+      audio.src = src;
+
+      audio.oncanplaythrough = function() {
+        audio.canplay = true;
+        if (callback)
+          callback();
+      }
+
+      audio._play = audio.play;
+      audio.play = function() {
+        audio.currentTime = 0;
+        audio._play();
+      }
+
+      window.audioSystem[name] = audio;
+      return audio;
+    }
+
+        // correct and wrong sfx
+    var sfx_correct = createSFX('correct', 'correct.mp3', false);
+    var sfx_wrong = createSFX('wrong', 'wrong.mp3', false);
+    sfx_wrong.volume = .02;
+    sfx_correct.volume = .02;
+
+    var sfx_shuffle = createSFX('shuffle', 'shuffle.mp3', false);
+    sfx_shuffle.volume = .3;
 
     (function animateLoadingScreen() {
       if (loading) {
@@ -195,14 +253,16 @@ var pairsGame = {
           drawBoard();
           // time to show and calculate if pair cards were chosen.
           canClick = false;
-          var sleep = 1500;
+          var sleep = 500;
           if (first.icon === second.icon) {
             // twin cards
             console.log("Correct! 10 points!");
+            window.audioSystem.correct.play();
             sleep = 200;
           } else {
             // wrong cards were chosen
             console.log("Wrong, try again!");
+            window.audioSystem.wrong.play();
             first.faceup = false;
             second.faceup = false;
           }
@@ -215,6 +275,11 @@ var pairsGame = {
           }, sleep);
         }
         
+        // play the card flip sound effect
+        if (sfx_cardFlip.canplay) {
+          sfx_cardFlip.play();
+        }
+
       }
 
       //drawBoard();
@@ -231,6 +296,7 @@ var pairsGame = {
 
       if (finished && !resettingGame) {
         console.log("Game Finsihed - you won!");
+        window.audioSystem.win.play();
         resettingGame = true;
 
         setTimeout(function() {
@@ -292,6 +358,7 @@ var pairsGame = {
       }
       
       // draw board
+      audioSystem.shuffle.play();
       drawBoard();
     }
   }
